@@ -70,14 +70,7 @@ Output:
       { term: 'state', count: 2, countsInRefs: { b: 2 }, refs: ['b'] },
       { term: 'know', count: 2, countsInRefs: { a: 2 }, refs: ['a'] }
 		]
-
-
-       
-        tracker.termsSortedByCount({ limit: 100 }, logTermsByCount);
-        tracker.getTerm({ term: 'text' }, logEntry);
-      }
-    }
-
+		
 The next time you instantiate `Tracker`, the documents 'a' and 'b' will already be accounted for; you do not need to add them again.
 
 Tests
