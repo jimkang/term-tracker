@@ -16,34 +16,34 @@ Usage
 
     var tracker = Tracker({ storeFile: __dirname + '/data/terms.json', textProp: 'body' });
 
-		tracker.track({
-			id: 'a',
-			caption: `Hey, I liked Dead Cells. I'm a limited-video-game-time dad. It is indeed a Metroidvania, a format that I love, but the procedurally generation freed me from thinking I had to inspect every last corner. Plus, I really enjoyed finding healing meats again.
+    tracker.track({
+      id: 'a',
+      caption: `Hey, I liked Dead Cells. I'm a limited-video-game-time dad. It is indeed a Metroidvania, a format that I love, but the procedurally generation freed me from thinking I had to inspect every last corner. Plus, I really enjoyed finding healing meats again.
 
-	I think I liked Kero Blaster even more, though. I had tried it on iOS before, but it's just too actiony for touch controls. On Switch, it feels great, and all the fine details are delightful. The little guy blinking when you hit the button to start the level, monsters faces when their hit. The music is really cheerful in that effective SMB2 way, though at first you don't know it's going to be cheerful, if you know what I mean.`
-		});
+  I think I liked Kero Blaster even more, though. I had tried it on iOS before, but it's just too actiony for touch controls. On Switch, it feels great, and all the fine details are delightful. The little guy blinking when you hit the button to start the level, monsters faces when their hit. The music is really cheerful in that effective SMB2 way, though at first you don't know it's going to be cheerful, if you know what I mean.`
+    });
 
-		tracker.track({
-			id: 'b',
-			text: `Kero Blaster is just such a good-feeling game. It's mostly no-shading pixel art. No implying 3D, even at the level NES games did. All flat, almost like Atari, but the iconography is just so delightful. And the second state of those two-state sprites hits the spot. The shocked look of guys when they've been hit is adorbs. The look on the main guy's face when he gets an item: also delightful! And the music is so calmly happy.
+    tracker.track({
+      id: 'b',
+      text: `Kero Blaster is just such a good-feeling game. It's mostly no-shading pixel art. No implying 3D, even at the level NES games did. All flat, almost like Atari, but the iconography is just so delightful. And the second state of those two-state sprites hits the spot. The shocked look of guys when they've been hit is adorbs. The look on the main guy's face when he gets an item: also delightful! And the music is so calmly happy.
 
-	Anyway, worth playing to feel good!`
-		});
+  Anyway, worth playing to feel good!`
+    });
 
-		console.log(tracker.getTerm({ term: 'good' }));
-		console.log(tracker.getTerm({ term: 'button' }));
-		console.log(tracker.getTermsSortedByCount({ limit: 10 }));
-		tracker.save(reportError);
-		
-		function reportError(error) {
-			console.log('Error saving term tracker:', error);
-		}
+    console.log(tracker.getTerm({ term: 'good' }));
+    console.log(tracker.getTerm({ term: 'button' }));
+    console.log(tracker.getTermsSortedByCount({ limit: 10 }));
+    tracker.save(reportError);
+    
+    function reportError(error) {
+      console.log('Error saving term tracker:', error);
+    }
 
 Output:
 
-		{ term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] }
+    { term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] }
     { term: 'button', count: 1, countsInRefs: { a: 1 }, refs: ['a'] }
-		[
+    [
       { term: 'the', count: 4, countsInRefs: { a: 2, b: 2 }, refs: ['a', 'b'] },
       {
         term: 'delightful',
@@ -69,8 +69,8 @@ Output:
       { term: 'really', count: 2, countsInRefs: { a: 2 }, refs: ['a'] },
       { term: 'state', count: 2, countsInRefs: { b: 2 }, refs: ['b'] },
       { term: 'know', count: 2, countsInRefs: { a: 2 }, refs: ['a'] }
-		]
-		
+    ]
+    
 The next time you instantiate `Tracker`, the documents 'a' and 'b' will already be accounted for; you do not need to add them again.
 
 Tests
