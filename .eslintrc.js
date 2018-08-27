@@ -12,7 +12,7 @@ module.exports = {
     semi: ['error', 'always'],
     'no-console': 'off'
   },
-parserOptions: {
-    ecmaVersion: 2017,
+  parserOptions: {
+    ecmaVersion: 2017
   }
 };

@@ -1,19 +1,7 @@
 term-tracker
 ==================
 
-A persistent record of terms used in documents that can be used for TF-IDF analysis or other purposes.The backing store is any [levelup](https://github.com/Level/levelup)-API-compatible (e.g. levelup, leveljs) DB.
-
-Given an object, it will add to a text file record of terms. The object should look like this:
-
-    {
-      id: 'some-unique-id',
-      text: 'Here is some text.'
-    }
-
-The record will track for each term:
-
-- How many times the term was used.
-- The object ids of the objects that used that term.
+A persistent record of terms used in documents that can be used for TF-IDF analysis or other purposes.The backing store is just a JSON file, which is loaded entirely in memory. It's nice and simple and will work for, say, personal blogs, but it's not for gigabytes of data.
 
 Installation
 ------------
@@ -24,29 +12,66 @@ Usage
 -----
 
     var Tracker = require('term-tracker');
-    var level = require('level');
 
-    var db = level(__dirname + '/terms.db');
-    Tracker({ db }, useTracker);
+    var tracker = Tracker({ storeFile: __dirname + '/data/terms.json', textProp: 'body' });
 
-    function useTracker(error, tracker) {
-      if (error) {
-        console.log('Error creating tracker:', error);
-        return;
-      }
+		tracker.track({
+			id: 'a',
+			caption: `Hey, I liked Dead Cells. I'm a limited-video-game-time dad. It is indeed a Metroidvania, a format that I love, but the procedurally generation freed me from thinking I had to inspect every last corner. Plus, I really enjoyed finding healing meats again.
 
-      var q = queue(1);
-      // Adding more than one document at time is not supported.
-      q.defer(tracker.track, { id: 'a', text: 'Hello, this is a body of text.' });
-      q.defer(tracker.track, { id: 'b', text: 'Welcome to a term tracker that counts words in text.' });
-      q.awaitAll(report);
+I think I liked Kero Blaster even more, though. I had tried it on iOS before, but it's just too actiony for touch controls. On Switch, it feels great, and all the fine details are delightful. The little guy blinking when you hit the button to start the level, monsters faces when their hit. The music is really cheerful in that effective SMB2 way, though at first you don't know it's going to be cheerful, if you know what I mean.`
+		});
 
-      function report(error) {
-        if (error) {
-          console.log('Error adding documents:', error);
-          return;
-        }
-        
+		tracker.track({
+			id: 'b',
+			text: `Kero Blaster is just such a good-feeling game. It's mostly no-shading pixel art. No implying 3D, even at the level NES games did. All flat, almost like Atari, but the iconography is just so delightful. And the second state of those two-state sprites hits the spot. The shocked look of guys when they've been hit is adorbs. The look on the main guy's face when he gets an item: also delightful! And the music is so calmly happy.
+
+Anyway, worth playing to feel good!`
+		});
+
+		console.log(tracker.getTerm({ term: 'good' }));
+		console.log(tracker.getTerm({ term: 'button' }));
+		console.log(tracker.getTermsSortedByCount({ limit: 10 }));
+		tracker.save(reportError);
+		
+		function reportError(error) {
+			console.log('Error saving term tracker:', error);
+		}
+
+Output:
+
+		{ term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] }
+    { term: 'button', count: 1, countsInRefs: { a: 1 }, refs: ['a'] }
+		[
+      { term: 'the', count: 4, countsInRefs: { a: 2, b: 2 }, refs: ['a', 'b'] },
+      {
+        term: 'delightful',
+        count: 3,
+        countsInRefs: { a: 1, b: 2 },
+        refs: ['a', 'b']
+      },
+      { term: 'hit', count: 3, countsInRefs: { a: 2, b: 1 }, refs: ['a', 'b'] },
+      {
+        term: 'blaster',
+        count: 2,
+        countsInRefs: { a: 1, b: 1 },
+        refs: ['a', 'b']
+      },
+      { term: 'it', count: 2, countsInRefs: { a: 1, b: 1 }, refs: ['a', 'b'] },
+      {
+        term: 'like',
+        count: 2,
+        countsInRefs: { b: 1, c: 1 },
+        refs: ['b', 'c']
+      },
+      { term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] },
+      { term: 'really', count: 2, countsInRefs: { a: 2 }, refs: ['a'] },
+      { term: 'state', count: 2, countsInRefs: { b: 2 }, refs: ['b'] },
+      { term: 'know', count: 2, countsInRefs: { a: 2 }, refs: ['a'] }
+		]
+
+
+       
         tracker.termsSortedByCount({ limit: 100 }, logTermsByCount);
         tracker.getTerm({ term: 'text' }, logEntry);
       }

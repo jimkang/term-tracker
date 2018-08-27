@@ -26,7 +26,9 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "level-sublevel": "^6.6.5",
+    "fs-extra": "^7.0.0",
+    "lodash.curry": "^4.1.1",
+    "lodash.findwhere": "^3.1.0",
     "natural": "^0.6.1"
   }
 }

@@ -1,65 +1,106 @@
-var Sublevel = require('level-sublevel');
-var util = require('util');
-var sb = require('standard-bail');
 var natural = require('natural');
+var findWhere = require('lodash.findwhere');
+var curry = require('lodash.curry');
+var fs = require('fs-extra');
+var stopwords = require('./data/nltk-stop-words.json')
+  .concat(require('./data/stopwords-json-stop-words.json'))
+  .concat(require('./data/extra-stop-words.json'));
 
-var tokenize = (new natural.WordTokenizer).tokenize;
+var tokenizer = new natural.WordTokenizer();
 
-function TermTracker({ db, textProp = 'text' }) {
-	var sblDb = Sublevel(db);
-	var entriesByTerm = sblDb.sublevel('entriesByTerm');
-	var termsByCount = sblDb.sublevel('termsByCount');
-	var docsById = sblDb.sublevel('docsById');
+// Storage format: It's a JSON file with an array of these things:
+// {
+//   term: 'something',
+//   count: 3,
+//   countsInRefs: {
+//     docIdA: 1,
+//     docIdB: 2
+//   },
+//   refs: [ docIdA, docIdB ]
+// }
 
-	return {
-		track,
-		getTermsSortedByCount,
-		getTerm
-	};
-
-	async function track(doc, done) {
-		var terms = tokenize(doc[textProp]);
-		try {
-			await incrementTermCountsPromise(terms);
-			await updateTermEntries(terms, doc);
-		} catch (error) {
-			// This isn't going to have a meaningful stack. :[
-			done(error);
-		}
+function TermTracker({ storeFile, textProp = 'text' }) {
+  var trackos = [];
+  fs.ensureFileSync(storeFile);
+  var storeContents = fs.readFileSync(storeFile, { encoding: 'utf8' });
+  if (storeContents) {
+    trackos = JSON.parse(storeContents);
   }
 
-	// These must be done in serial.
-	function incrementTermCounts(terms, done) {
-	}
+  return {
+    track,
+    getTermsSortedByCount,
+    getTerm,
+    save
+  };
 
-	// These can be done in parallel.
-	function updateTermEntries(terms, docs, done) {
-	}
+  function track(doc) {
+    var text = doc[textProp];
+    if (text) {
+      var terms = tokenizer.tokenize(text);
+      terms
+        .filter(shouldInclude)
+        .map(normalize)
+        .forEach(curry(updateTerm)(doc));
+      trackos.sort(aGoesBeforeB);
+    }
+  }
 
-		// Update the counts and the entries.
+  function updateTerm(doc, term) {
+    var tracko = findWhere(trackos, { term });
+    if (!tracko) {
+      tracko = {
+        term,
+        count: 0,
+        countsInRefs: {},
+        refs: []
+      };
+      trackos.push(tracko);
+    }
+    tracko.count += 1;
+    var refCount = tracko.countsInRefs[doc.id];
+    if (refCount === undefined) {
+      refCount = 0;
+    }
+    refCount += 1;
+    if (tracko.refs.indexOf(doc.id) === -1) {
+      tracko.refs.push(doc.id);
+    }
+    tracko.countsInRefs[doc.id] = refCount;
+  }
 
-		forgivingGet(entriesByTerm, doc.id, sb(updateEntry, done));
+  function getTerm({ term }) {
+    return findWhere(trackos, { term });
+  }
 
-		function updateEntry(entry) {
-			if (!entry) {
-				entriesByTerm.put(doc.
-		if (existingEntry) {
-			
-		entriesByTerm.get(branchOnEntry);
+  function getTermsSortedByCount(opts) {
+    return trackos.slice(0, (opts && opts.limit) || 25);
+  }
 
-		funcio
-	}
+  function save(done) {
+    fs.writeFile(
+      storeFile,
+      JSON.stringify(trackos, null, 2),
+      { encoding: 'utf8' },
+      done
+    );
+  }
 }
 
-function forgivingGet(db, id, done) {
-	db.get(id, evaluateResult);
-
-	function evaluateResult(error, record) {
-		if (!error || error.type === 'NotFoundError') {
-			done(null, record);
-		}
-		else {
-			done(error, record);
-		}
-	}
+function aGoesBeforeB(a, b) {
+  if (a.count > b.count) {
+    return -1;
+  } else {
+    return 1;
+  }
 }
+
+function shouldInclude(term) {
+  return term.length > 1 && stopwords.indexOf(term) === -1;
+}
+
+function normalize(term) {
+  return term.toLowerCase();
+}
+
+module.exports = TermTracker;

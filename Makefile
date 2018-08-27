@@ -1,6 +1,5 @@
 test:
-	mkdir -p tests/fixtures/test.db
-	rm -rf tests/fixtures/test.db/*
+	rm -rf tests/fixtures/test.json
 	node tests/basictests.js
 
 prettier:
