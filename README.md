@@ -30,6 +30,7 @@ Usage
 
     console.log(tracker.getTerm({ term: 'good' }));
     console.log(tracker.getTerm({ term: 'button' }));
+    console.log(tracker.getDocMeta({ id: 'a' }));
     console.log(tracker.getTermsSortedByCount({ limit: 10 }));
     tracker.save(reportError);
     
@@ -40,7 +41,80 @@ Usage
 Output:
 
     { term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] }
+
     { term: 'button', count: 1, countsInRefs: { a: 1 }, refs: ['a'] }
+
+    {
+      id: 'a',
+      termCount: 71,
+      countsPerTerm: {
+        hey: 1,
+        liked: 2,
+        dead: 1,
+        cells: 1,
+        limited: 1,
+        video: 1,
+        game: 1,
+        time: 1,
+        dad: 1,
+        it: 1,
+        indeed: 1,
+        metroidvania: 1,
+        format: 1,
+        love: 1,
+        procedurally: 1,
+        generation: 1,
+        freed: 1,
+        thinking: 1,
+        inspect: 1,
+        every: 1,
+        last: 1,
+        corner: 1,
+        plus: 1,
+        really: 2,
+        enjoyed: 1,
+        finding: 1,
+        healing: 1,
+        meats: 1,
+        think: 1,
+        kero: 1,
+        blaster: 1,
+        even: 1,
+        though: 2,
+        tried: 1,
+        ios: 1,
+        actiony: 1,
+        touch: 1,
+        controls: 1,
+        on: 1,
+        switch: 1,
+        feels: 1,
+        great: 1,
+        fine: 1,
+        details: 1,
+        delightful: 1,
+        the: 2,
+        little: 1,
+        guy: 1,
+        blinking: 1,
+        hit: 2,
+        button: 1,
+        start: 1,
+        level: 1,
+        monsters: 1,
+        faces: 1,
+        music: 1,
+        cheerful: 2,
+        effective: 1,
+        smb2: 1,
+        way: 1,
+        first: 1,
+        know: 2,
+        going: 1,
+        mean: 1
+      }
+    }
+
     [
       { term: 'the', count: 4, countsInRefs: { a: 2, b: 2 }, refs: ['a', 'b'] },
       {

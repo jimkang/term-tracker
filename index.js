@@ -20,33 +20,56 @@ var tokenizer = new natural.WordTokenizer();
 // }
 
 function TermTracker({ storeFile, textProp = 'text' }) {
-  var trackos = [];
   fs.ensureFileSync(storeFile);
   var storeContents = fs.readFileSync(storeFile, { encoding: 'utf8' });
   if (storeContents) {
-    trackos = JSON.parse(storeContents);
+    var { trackos, docMetadata } = JSON.parse(storeContents);
+  }
+  if (!trackos) {
+    trackos = [];
+  }
+  if (!docMetadata) {
+    docMetadata = [];
   }
 
   return {
     track,
     getTermsSortedByCount,
     getTerm,
+    getDocMeta,
     save
   };
 
   function track(doc) {
     var text = doc[textProp];
-    if (text) {
-      var terms = tokenizer.tokenize(text);
-      terms
-        .filter(shouldInclude)
-        .map(normalize)
-        .forEach(curry(updateTerm)(doc));
-      trackos.sort(aGoesBeforeB);
+    if (!text) {
+      return;
+    }
+    var terms = tokenizer.tokenize(text);
+    terms = terms.filter(shouldInclude).map(normalize);
+    terms.forEach(curry(updateTracko)(doc));
+
+    trackos.sort(aGoesBeforeB);
+
+    var metadatum = {
+      id: doc.id,
+      termCount: terms.length,
+      countsPerTerm: {}
+    };
+    terms.forEach(countTermInMetadatum);
+    docMetadata.push(metadatum);
+
+    function countTermInMetadatum(term) {
+      var count = metadatum.countsPerTerm[term];
+      if (isNaN(count)) {
+        count = 0;
+      }
+      count += 1;
+      metadatum.countsPerTerm[term] = count;
     }
   }
 
-  function updateTerm(doc, term) {
+  function updateTracko(doc, term) {
     var tracko = findWhere(trackos, { term });
     if (!tracko) {
       tracko = {
@@ -73,6 +96,10 @@ function TermTracker({ storeFile, textProp = 'text' }) {
     return findWhere(trackos, { term });
   }
 
+  function getDocMeta({ id }) {
+    return findWhere(docMetadata, { id });
+  }
+
   function getTermsSortedByCount(opts) {
     return trackos.slice(0, (opts && opts.limit) || 25);
   }
@@ -80,7 +107,7 @@ function TermTracker({ storeFile, textProp = 'text' }) {
   function save(done) {
     fs.writeFile(
       storeFile,
-      JSON.stringify(trackos, null, 2),
+      JSON.stringify({ trackos, docMetadata }, null, 2),
       { encoding: 'utf8' },
       done
     );
