@@ -2,7 +2,7 @@ term-tracker
 ==================
 
 A persistent record of terms used in documents that can be used for TF-IDF analysis or other purposes.
-The backing store is just a JSON file, which is loaded entirely in memory. It's nice and simple and will work for, say, personal blogs, but it's not for gigabytes of data.
+The backing store is just a JSON file, which is loaded entirely in memory. It's nice and simple and will work for, say, personal blogs, but it's not a corpus that does not fit in memory.
 
 Installation
 ------------
