@@ -38,6 +38,8 @@ Usage
       console.log('Error saving term tracker:', error);
     }
 
+If you've already parsed the words, you can pass an object with an array of words (looks for `words` property by default, but you can change this by specifying `wordsProp` in the Tracker constructor). If it finds a words property, it favors that over parsing the text itself.
+
 Output:
 
     { term: 'good', count: 2, countsInRefs: { b: 2 }, refs: ['b'] }

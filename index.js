@@ -19,7 +19,7 @@ var tokenizer = new natural.WordTokenizer();
 //   refs: [ docIdA, docIdB ]
 // }
 
-function TermTracker({ storeFile, textProp = 'text' }) {
+function TermTracker({ storeFile, textProp = 'text', wordsProp = 'words' }) {
   fs.ensureFileSync(storeFile);
   var storeContents = fs.readFileSync(storeFile, { encoding: 'utf8' });
   if (storeContents) {
@@ -41,11 +41,15 @@ function TermTracker({ storeFile, textProp = 'text' }) {
   };
 
   function track(doc) {
-    var text = doc[textProp];
-    if (!text) {
-      return;
+    var terms = doc[wordsProp];
+    if (!terms || terms.length < 1) {
+      const text = doc[textProp];
+      if (!text) {
+        return;
+      }
+      terms = tokenizer.tokenize(text);
     }
-    var terms = tokenizer.tokenize(text);
+
     terms = terms.filter(shouldInclude).map(normalize);
     terms.forEach(curry(updateTracko)(doc));
 
