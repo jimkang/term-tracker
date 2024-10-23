@@ -4,6 +4,8 @@ term-tracker
 A persistent record of terms used in documents that can be used for TF-IDF analysis or other purposes.
 The backing store is just a JSON file, which is loaded entirely in memory. It's nice and simple and will work for, say, personal blogs, but it's not a corpus that does not fit in memory.
 
+You can also just run it in memory without a file by omitting the `storeFile` option.
+
 Installation
 ------------
 
@@ -33,7 +35,7 @@ Usage
     console.log(tracker.getDocMeta({ id: 'a' }));
     console.log(tracker.getTermsSortedByCount({ limit: 10 }));
     tracker.save(reportError);
-    
+
     function reportError(error) {
       console.log('Error saving term tracker:', error);
     }
@@ -144,7 +146,7 @@ Output:
       { term: 'state', count: 2, countsInRefs: { b: 2 }, refs: ['b'] },
       { term: 'know', count: 2, countsInRefs: { a: 2 }, refs: ['a'] }
     ]
-    
+
 The next time you instantiate `Tracker`, the documents 'a' and 'b' will already be accounted for; you do not need to add them again.
 
 Tests

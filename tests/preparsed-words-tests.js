@@ -1,17 +1,14 @@
 /* global __dirname */
 
-var test = require('tape');
-var assertNoError = require('assert-no-error');
-var Tracker = require('../index');
+var runCommonCase = require('./run-common-case');
 
 const storeFile = __dirname + '/fixtures/test.json';
-var tracker;
 
 var testCases = [
   {
     name: 'Initial state',
     createNewTrackerInTest: true,
-    expectedTermsByCount: [],
+    expectedSalientTerms: [],
     textProp: 'caption',
     docsToAdd: [
       {
@@ -72,40 +69,17 @@ var testCases = [
           'America',
           'and',
           'also',
-          'Canada'
-        ]
-      }
-    ]
+          'Canada',
+        ],
+      },
+    ],
   },
   {
     name: 'Add more records',
     createNewTrackerInTest: true,
-    expectedTermsByCount: [
+    expectedSalientTerms: [
       { term: 'mattress', count: 2, countsInRefs: { a: 2 }, refs: ['a'] },
       { term: 'whatever', count: 2, countsInRefs: { a: 2 }, refs: ['a'] },
-      { term: 'alluded', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'canada', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'little', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'three', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'box', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'needs', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'explodes', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'sleep', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'free', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'keep', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'shipping', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'temperature', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'returns', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'tailored', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'breathable', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'also', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'america', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'states', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'united', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'cool', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'come', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'jake', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'good', count: 1, countsInRefs: { a: 1 }, refs: ['a'] }
     ],
     expectedDocs: {
       b: {
@@ -126,9 +100,9 @@ var testCases = [
           code: 1,
           $50: 1,
           mattress: 1,
-          purchase: 1
-        }
-      }
+          purchase: 1,
+        },
+      },
     },
     docsToAdd: [
       {
@@ -170,8 +144,8 @@ var testCases = [
           'off',
           'your',
           'mattress',
-          'purchase'
-        ]
+          'purchase',
+        ],
       },
       {
         id: 'c',
@@ -212,75 +186,75 @@ var testCases = [
           'off',
           'your',
           'mattress',
-          'purchase'
-        ]
-      }
-    ]
+          'purchase',
+        ],
+      },
+    ],
   },
   {
     name: 'Reopening',
     createNewTrackerInTest: true,
-    expectedTermsByCount: [
+    expectedSalientTerms: [
       {
         term: 'application',
         count: 4,
         countsInRefs: { b: 2, c: 2 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'mattress',
         count: 4,
         countsInRefs: { a: 2, b: 1, c: 1 },
-        refs: ['a', 'b', 'c']
+        refs: ['a', 'b', 'c'],
       },
       {
         term: 'less',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'acts',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'didn\'t',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'said',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'offer',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'code',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'mean',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       { term: 'whatever', count: 2, countsInRefs: { a: 2 }, refs: ['a'] },
       {
         term: 'anything',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       { term: 'get', count: 2, countsInRefs: { b: 1, c: 1 }, refs: ['b', 'c'] },
       { term: '$50', count: 2, countsInRefs: { b: 1, c: 1 }, refs: ['b', 'c'] },
@@ -288,29 +262,20 @@ var testCases = [
         term: 'purchase',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'thumbs',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
       {
         term: 'exhortation',
         count: 2,
         countsInRefs: { b: 1, c: 1 },
-        refs: ['b', 'c']
+        refs: ['b', 'c'],
       },
-      { term: 'breathable', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'jake', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'sleep', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'tailored', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'returns', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'canada', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'alluded', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'little', count: 1, countsInRefs: { a: 1 }, refs: ['a'] },
-      { term: 'america', count: 1, countsInRefs: { a: 1 }, refs: ['a'] }
     ],
     expectedDocs: {
       a: {
@@ -341,8 +306,8 @@ var testCases = [
           states: 1,
           america: 1,
           also: 1,
-          canada: 1
-        }
+          canada: 1,
+        },
       },
       b: {
         id: 'b',
@@ -362,8 +327,8 @@ var testCases = [
           code: 1,
           $50: 1,
           mattress: 1,
-          purchase: 1
-        }
+          purchase: 1,
+        },
       },
       c: {
         id: 'c',
@@ -383,50 +348,11 @@ var testCases = [
           code: 1,
           $50: 1,
           mattress: 1,
-          purchase: 1
-        }
-      }
-    }
-  }
+          purchase: 1,
+        },
+      },
+    },
+  },
 ];
 
-testCases.forEach(runCase);
-
-function runCase(testCase) {
-  test(testCase.name, runTest);
-
-  function runTest(t) {
-    var trackerOpts = { storeFile };
-    if (testCase.textProp) {
-      trackerOpts.textProp = testCase.textProp;
-    }
-    if (testCase.createNewTrackerInTest) {
-      tracker = Tracker(trackerOpts);
-    }
-
-    var termsSorted = tracker.getTermsSortedByCount();
-    t.deepEqual(
-      termsSorted,
-      testCase.expectedTermsByCount,
-      'Sorted terms are correct.'
-    );
-    if (testCase.docsToAdd) {
-      testCase.docsToAdd.forEach(tracker.track);
-    }
-    if (testCase.expectedDocs) {
-      for (var docId in testCase.expectedDocs) {
-        t.deepEqual(
-          tracker.getDocMeta({ id: docId }),
-          testCase.expectedDocs[docId],
-          'Doc entry is correct.'
-        );
-      }
-    }
-    tracker.save(checkSaveResult);
-
-    function checkSaveResult(error) {
-      assertNoError(t.ok, error, 'No error while calling query method.');
-      t.end();
-    }
-  }
-}
+testCases.forEach((testCase) => runCommonCase(testCase, { storeFile }));

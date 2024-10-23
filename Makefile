@@ -1,6 +1,7 @@
 test:
 	rm -rf tests/fixtures/test.json
 	node tests/basictests.js
+	node tests/in-memory-tests.js
 	rm -rf tests/fixtures/test.json
 	node tests/preparsed-words-tests.js
 

@@ -20,16 +20,17 @@ var tokenizer = new natural.WordTokenizer();
 // }
 
 function TermTracker({ storeFile, textProp = 'text', wordsProp = 'words' }) {
-  fs.ensureFileSync(storeFile);
-  var storeContents = fs.readFileSync(storeFile, { encoding: 'utf8' });
-  if (storeContents) {
-    var { trackos, docMetadata } = JSON.parse(storeContents);
-  }
-  if (!trackos) {
-    trackos = [];
-  }
-  if (!docMetadata) {
-    docMetadata = [];
+  var trackos = [];
+  var docMetadata = []; 
+
+  if (storeFile) {
+    fs.ensureFileSync(storeFile);
+    storeContents = fs.readFileSync(storeFile, { encoding: 'utf8' });
+    if (storeContents) {
+      let parsed = JSON.parse(storeContents);
+      trackos = parsed.trackos;
+      docMetadata = parsed.docMetadata;
+    }
   }
 
   return {
@@ -109,12 +110,16 @@ function TermTracker({ storeFile, textProp = 'text', wordsProp = 'words' }) {
   }
 
   function save(done) {
-    fs.writeFile(
-      storeFile,
-      JSON.stringify({ trackos, docMetadata }, null, 2),
-      { encoding: 'utf8' },
-      done
-    );
+    if (storeFile) {
+      fs.writeFile(
+        storeFile,
+        JSON.stringify({ trackos, docMetadata }, null, 2),
+        { encoding: 'utf8' },
+        done
+      );
+    } else {
+      setTimeout(done, 0);
+    }
   }
 }
 
